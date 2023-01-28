@@ -1,0 +1,30 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+body {
+    background-color: #111;
+}
+.assets {
+    position: relative;
+    margin: 1em;
+    width: 40vw;
+    height: 10vh;
+    background-color: #222;
+    border-radius: 0.5em;
+    box-shadow: #0003 0 4px 8px;
+    border: 1px solid rgba(0,0,0,.125);
+    margin-bottom: 5vh;
+}
+.chart {
+    position: relative;
+    margin: 1em;
+    width: 80vw;
+    border-radius: 0.5em;
+    background: #222;
+    display: inline-block;
+}
+.chart p {
+    margin: 0.5em;
+    color: #ccc
+}
