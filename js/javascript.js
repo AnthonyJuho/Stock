@@ -50,7 +50,6 @@ let InfoArray = [koreanInfo,englishInfo,mathInfo,socialInfo,scienceInfo];
 
 let interval = setInterval(function() {
     for(let num = 0;num<=4;num++) {
-        var Element = ElementArray[num];
         var Info = InfoArray[num];
         var random = Math.random()*100000-50000;
         var firstprice = Info.price;
@@ -61,19 +60,26 @@ let interval = setInterval(function() {
             Info.profit.price = 0;
         } else {
             var ratio = Info.price/firstprice;
-            var percent = Info.profit.percent *= ratio;
-            // Info.profit.percent *= 
+            Info.profit.percent *= ratio;
+            Info.profit.price = Info.profit.holding*(Info.profit.percent+1);
         }
     }
 },1000);
 
 function ShowDiv() {
+    for(let num = 0;num<=4;num++){
+        var Element = ElementArray[num];
+        var Info = InfoArray[num];
+        
+        var price = Element.getElementById("price");
+        var holding = Element.getElementById("holding");
+        var profit = Element.getElementById("profit");
 
+        price.innerText = "현재가: "+Info.price+"원";
+    }
 }
 
-function DeList(element,info) {
-
-}
+// function ChangeNumber()
 
 google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(drawChart);
