@@ -24,7 +24,20 @@ body {
     background: #222;
     display: inline-block;
 }
-.chart p {
-    margin: 0.5em;
-    color: #ccc
+.chart .grid .list{
+    margin-right: 5vw;
+    margin-left: 5vw;
+    display: inline-block;
+}
+.chart ul li p {
+    margin: 0.4em;
+    color: #ccc;
+    display: inline-block;
+}
+.chart .grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+}
+.stockchart {
+    background-color: #222;
 }
