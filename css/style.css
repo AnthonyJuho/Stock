@@ -1,0 +1,28 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+h1 {
+    text-align: center;
+    padding: 20px;
+    border-bottom: 1px solid black;
+}
+.mymoney {
+    padding: 20px;
+}
+.item {
+    padding: 20px;
+    border: 1px solid black;
+}
+p {
+    display: inline;
+}
+button {
+    margin: 10px
+}
+.red {
+    color:red;
+}
+.green {
+    color: lightgreen;
+}
