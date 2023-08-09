@@ -30,3 +30,8 @@ button {
 .blue {
     color:#2679ed;
 }
+.air {
+    position: absolute;
+    width: 100%;
+    height: 20%;
+}

@@ -233,8 +233,8 @@ function drawTotalChart() {
         title: "전체 주가",
         legend: {position: 'bottom'},
         vAxis: {
-            minValue: findMin(minmax.min),
-            maxValue: findMax(minmax.max)
+            minValue: minmax.min,
+            maxValue: minmax.max
         },
         colors: useColor
     };
@@ -437,6 +437,10 @@ for(var i = 0; i < itemList.length; i++) {
 
 //종목 보이기
 function UpdateItem() {
+    
+    //전체 차트 그리기
+    var previousScrollY = window.scrollY;
+
     for(var i = 0; i< itemList.length; i++) {
         var p = document.getElementById('iteminfo'+(i+1));
 
@@ -468,18 +472,16 @@ function UpdateItem() {
         }
 
         //차트 그리기
-        var scrollPosition = window.scrollY || document.documentElement.scrollTop;
+        // var previousScrollY = window.scrollY;
         google.charts.setOnLoadCallback(drawChart(Info[i],i+1));
-        window.scrollTo(0, scrollPosition);
-        
+        // window.scrollTo(0, previousScrollY);
 
     }
 
-    //전체 차트 그리기
-
-    var scrollPosition = window.scrollY || document.documentElement.scrollTop;
+    
     google.charts.setOnLoadCallback(drawTotalChart);
-    window.scrollTo(0, scrollPosition);
+
+    window.scrollTo(0, previousScrollY);
 
 
 }
@@ -646,3 +648,4 @@ setInterval(() => {
     UpdateItem();
     UpdateProperty();
 }, 1000*repeating_time);
+
