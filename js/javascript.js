@@ -1,14 +1,23 @@
-var list = ['삼성전자', 'LG에너지솔루션', 'SK하이닉스', '삼성바이오로직스', 'POSCO홀딩스', '삼성전자우', 'LG화학', '삼성SDI', '현대차', 'NAVER', '포스코퓨처엠', '기아', '카카오', '셀트리온', '현대모비스', 'KB금융', '삼성물산', '신한지주', 'SK이노베이션', 'LG전자', '포스코인터내셔널', '삼성생명', '카카오뱅크', 'LG', '한국전력', 'HD현대중공업', '삼성화재', 'KT&G', '하나금융지주', '하이브'];
+var allitemlist = ['삼성전자', 'LG에너지솔루션', 'SK하이닉스', '삼성바이오로직스', 'POSCO홀딩스', '삼성전자우', 'LG화학', '삼성SDI', '현대차', 'NAVER', '포스코퓨처엠', '기아', '카카오', '셀트리온', '현대모비스', 'KB금융', '삼성물산', '신한지주', 'SK이노베이션', 'LG전자', '포스코인터내셔널', '삼성생명', '카카오뱅크', 'LG', '한국전력', 'HD현대중공업', '삼성화재', 'KT&G', '하나금융지주', '하이브'];
 
 
 //설정
-var number_of_item = 5;
+var number_of_item = 5; //19이하로 설정 because 색상이 19개밖에 없음 - 색상을 추가하고 늘리면 가능
 var big_bounce = 250000;
 var small_bounce = 10000;
 var max_time = 10;
 var start_price = 500000;
-var chart_value_count = 50;
+var chart_value_count = 20;
 var start_property = 5000000;
+var delisting_delay = 10; //s
+var repeating_time = 1; //s
+var defaultColors = [
+    '#3366CC', '#DC3912', '#FF9900', '#109618', '#990099',
+    '#0099C6', '#DD4477', '#66AA00', '#B82E2E', '#316395',
+    '#994499', '#22AA99', '#AAAA11', '#6633CC', '#E67300',
+    '#8B0707', '#329262', '#5574A6', '#3B3EAC'
+];
+var useColor = defaultColors.slice(0,number_of_item);
 
 
 
@@ -31,7 +40,6 @@ function getRandomArray(arr, numElements) {
     
     return shuffledArray.slice(0, numElements);
 }
-
 //값을 배열에 밀어넣기
 function AddChartValue(arr, newValue) {
     if (arr.length > 0) {
@@ -51,7 +59,7 @@ function createNumberArray(n) {
       numberArray.push(i);
     }
     return numberArray;
-  }
+}
 //두 배열 합치기
 function zipArrays(array1, array2) {
     if (array1.length !== array2.length) {
@@ -64,7 +72,14 @@ function zipArrays(array1, array2) {
     }
   
     return resultArray;
-  }
+}
+//배열 넣기
+function addArray(originalArray, valuesToAdd) {
+    for (var i = 0; i < originalArray.length; i++) {
+        originalArray[i].push(valuesToAdd[i]);
+    }
+}
+
 //배열에서 최솟값과 최댓값 찾기
   function findMin(arr) {
     if (arr.length === 0) {
@@ -79,7 +94,7 @@ function zipArrays(array1, array2) {
     }
     
     return minValue;
-  }
+}
   
   function findMax(arr) {
     if (arr.length === 0) {
@@ -94,12 +109,39 @@ function zipArrays(array1, array2) {
     }
     
     return maxValue;
-  }
+}
+
+function findMinMax2D(arr) {
+    var minValue = Infinity; // 초기값을 양의 무한대로 설정
+    var maxValue = -Infinity; // 초기값을 음의 무한대로 설정
+
+    for (var i = 0; i < arr.length; i++) {
+        for (var j = 0; j < arr[i].length; j++) {
+            var currentValue = arr[i][j];
+            if (currentValue < minValue) {
+                minValue = currentValue;
+            }
+            if (currentValue > maxValue) {
+                maxValue = currentValue;
+            }
+        }
+    }
+    return {min: minValue,max :maxValue};
+}
+//2D배열 각각 앞에 값 제거
+function removefirst2D(originalArray) {
+
+    for (var i = 0; i < originalArray.length; i++) {
+        originalArray[i].shift();
+    }
+    
+
+}
 
 //숫자 3칸마다 ','찍기
-  function changeNumber(number) {
+function changeNumber(number) {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  }
+}
 
 //글자에 색입히기
 function TextColor(text,color) {
@@ -135,9 +177,6 @@ function getTime() {
 
 
 
-
-
-
 //차트에 필요한 x축 배열 만들기
 var x_array = createNumberArray(chart_value_count);
 x_array.unshift("Time");
@@ -159,10 +198,48 @@ function drawChart(Info,i) {
         vAxis: {
             minValue: findMin(y_array),
             maxValue: findMax(y_array)
-        }
+        },
+        colors: [useColor[i-1]]
     };
 
     var chart = new google.visualization.LineChart(document.getElementById("chart"+i));
+
+    chart.draw(data, options);
+}
+
+
+function drawTotalChart() {
+    var chart_data = x_array.slice()
+    for(var i = 0; i<number_of_item;i++) {
+        
+        var y_array = Info[i].chart_array.slice();
+        y_array.unshift(Info[i].name);
+
+        if(i == 0) {
+            chart_data = zipArrays(chart_data,y_array);
+        } else {
+            addArray(chart_data,y_array);
+        }
+
+
+    }
+    
+    var data = google.visualization.arrayToDataTable(chart_data);
+
+    removefirst2D(chart_data);
+    var minmax = findMinMax2D(chart_data);
+
+    var options = {
+        title: "전체 주가",
+        legend: {position: 'bottom'},
+        vAxis: {
+            minValue: findMin(minmax.min),
+            maxValue: findMax(minmax.max)
+        },
+        colors: useColor
+    };
+
+    var chart = new google.visualization.LineChart(document.getElementById("totalchart"));
 
     chart.draw(data, options);
 }
@@ -185,7 +262,7 @@ for(var i = 0; i<number_of_item; i++) {
 
 
 //랜덤으로 종목 이름 고르기
-var StockList = getRandomArray(list, number_of_item);
+var StockList = getRandomArray(allitemlist, number_of_item);
 
 
 var startchartarray = new Array(chart_value_count).fill(start_price);
@@ -198,7 +275,13 @@ var subinfo = {
     time : 0,
     now_time : 0,
     chart_array : 0,
-    shares: 0
+    shares: 0,
+    investmoney: {
+        count: 0,
+        money: 0
+    },
+    rate: 0,
+    delisting: 0
 }
 
 var Info = []
@@ -307,14 +390,44 @@ for(var i = 0; i < itemList.length; i++) {
             iteminfo.price = iteminfo.startprice+price;
             if(iteminfo.price <=0 ){
                 iteminfo.time = -1;
-                iteminfo.price="0";
+                iteminfo.price = 0;
             }
             iteminfo.now_time++;
             AddChartValue(iteminfo.chart_array, iteminfo.price);
             
             
+            //수익률 구하기
+            var avrgmoney = iteminfo.investmoney.money/iteminfo.investmoney.count;
+            
+            var rate = (iteminfo.price-avrgmoney)/avrgmoney*100;
+            iteminfo.rate = rate;
+            
+            
         } else {
             //상장폐지 후
+            iteminfo.delisting += 1;
+            AddChartValue(iteminfo.chart_array, 0);
+            if(iteminfo.delisting > delisting_delay/repeating_time) {
+                //새로운 종목으로 변환
+                var arr1 = allitemlist.slice();
+                var arr2 = StockList.slice();
+                var removeditemlist = arr1.filter(item => !arr2.includes(item));
+                var randomIndex = Math.floor(Math.random() * removeditemlist.length);
+                var new_name = removeditemlist[randomIndex];
+                
+                StockList[i] = new_name;
+                
+                subinfo.name = new_name;
+                subinfo.chart_array = startchartarray.slice();
+                
+                Info[i] = subinfo;
+
+                iteminfo.startprice = iteminfo.price;
+                iteminfo.now_time = 0;
+                iteminfo.time = getTime();
+                iteminfo.future = Math.round(getProbability()*big_bounce);
+            }
+
         }
 
     
@@ -335,13 +448,39 @@ function UpdateItem() {
             price = changeNumber(Info[i].price);
         }
 
-        p.innerHTML = Info[i].name+" : "+price+"<br>- "+Info[i].shares+"주 보유";
+        if(Info[i].shares != 0) {
+            //종목의 수익률 표시하기
+            var rate = Math.round(Info[i].rate*10)/10;
+            var color;
+            var prefix;
+            if(rate<0) {
+                color = 'blue';
+                prefix = "";
+            } else {
+                color = 'red';
+                prefix = "+";
+            }
+            p.innerHTML = Info[i].name+" : "+price+" 수익률: "+TextColor(prefix+rate+"%",color)+"<br>- "+Info[i].shares+"주 보유";
+
+        } else {
+            
+            p.innerHTML = Info[i].name+" : "+price+"<br>- "+Info[i].shares+"주 보유";
+        }
 
         //차트 그리기
-        
+        var scrollPosition = window.scrollY || document.documentElement.scrollTop;
         google.charts.setOnLoadCallback(drawChart(Info[i],i+1));
+        window.scrollTo(0, scrollPosition);
+        
 
     }
+
+    //전체 차트 그리기
+
+    var scrollPosition = window.scrollY || document.documentElement.scrollTop;
+    google.charts.setOnLoadCallback(drawTotalChart);
+    window.scrollTo(0, scrollPosition);
+
 
 }
 
@@ -396,15 +535,21 @@ for(var i = 1;i<=number_of_item;i++) {
 function Buy(i,count,label) {
     var price = Info[i].price;
     mine.balance -= count*price;
+    Info[i].investmoney.count += count;
+    Info[i].investmoney.money += count*price;
     Info[i].shares += count;
-    label.innerHTML = Info[i].name+" "+count+"주를 구입하셨습니다. (보유 금액 "+TextColor("-"+changeNumber(count*price),'red')+"원, "+TextColor("+"+changeNumber(count),'green')+"주)";
+    label.innerHTML = Info[i].name+" "+count+"주를 구입하셨습니다. (보유 금액 "+TextColor("-"+changeNumber(count*price),'blue')+"원, "+TextColor("+"+changeNumber(count),'red')+"주)";
 
 }
 function Sell(i,count,label) {
     var price = Info[i].price;
     mine.balance += count*price;
     Info[i].shares -= count;
-    label.innerHTML = Info[i].name+" "+count+"주를 판매하셨습니다. (보유 금액 "+TextColor("+"+changeNumber(count*price),'green')+"원, "+TextColor("-"+changeNumber(count),'red')+"주)";
+    if(Info[i].shares == 0) {
+        Info[i].investmoney.count = 0;
+        Info[i].investmoney.money = 0;
+    } 
+    label.innerHTML = Info[i].name+" "+count+"주를 판매하셨습니다. (보유 금액 "+TextColor("+"+changeNumber(count*price),'red')+"원, "+TextColor("-"+changeNumber(count),'blue')+"주)";
 
 }
 
@@ -439,20 +584,45 @@ for(var index = 0;index<number_of_item;index++) {
             if(Info[i].time != -1) {
                 var price = Info[i].price;
                 var selectvalue = select.value;
-                var numbervalue = number.value;
-                console.log(selectvalue,numbervalue);
+                var numbervalue = parseInt(number.value);
                 if(selectvalue == "money") {
                     if(mine.balance >= numbervalue) {
                         var count = Math.floor(numbervalue/price);
                         Buy(i,count,label);
                     } else {
-                        label.innerHTML = TextColor("금액이 부족합니다",'red');
+                        var count = Math.floor(mine.balance/price);
+                        Buy(i,count,label);
                     }
-                    console.log("금액");
                 } else if(selectvalue == "count") {
-                    console.log("주");
-                    if(I)
-                    Buy(i,count,label);
+                    var count = numbervalue;
+                    if(mine.balance >= count*price) {
+                        Buy(i,count,label);
+                    } else {
+                        var count2 = Math.floor(mine.balance/price);
+                        Buy(i,count2,label);
+                    }
+                }
+            }
+        });
+        sell.addEventListener("click", function() {
+            if(Info[i].time != -1) {
+                var price = Info[i].price;
+                var selectvalue = select.value;
+                var numbervalue = parseInt(number.value);
+                if(selectvalue == "money") {
+                    var count = Math.floor(numbervalue/price);
+                    if(Info[i].shares >= count) {
+                        Sell(i,count,label);
+                    } else {
+                        Sell(i,Info[i].shares,label);
+                    }
+                } else if(selectvalue == "count") {
+                    var count = numbervalue;
+                    if(Info[i].shares >= count) {
+                        Sell(i,count,label);
+                    } else {
+                        Sell(i,Info[i].shares,label);
+                    }
                 }
             }
         });
@@ -462,12 +632,6 @@ for(var index = 0;index<number_of_item;index++) {
 
 }
 
-
-
-
-//종목의 수익률 표시하기
-
-//상장폐지 후 처리
 
 
 
@@ -481,6 +645,4 @@ setInterval(() => {
     UpdatePrice();
     UpdateItem();
     UpdateProperty();
-}, 1000);
-
-
+}, 1000*repeating_time);

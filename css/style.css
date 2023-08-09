@@ -9,6 +9,7 @@ h1 {
 }
 .mymoney {
     padding: 20px;
+    border: 1px solid black;
 }
 .item {
     padding: 20px;
@@ -21,8 +22,11 @@ button {
     margin: 10px
 }
 .red {
-    color:red;
+    color:#ed2926;
 }
 .green {
     color: lightgreen;
+}
+.blue {
+    color:#2679ed;
 }
