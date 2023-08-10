@@ -420,31 +420,31 @@ for(var i = 0; i < itemList.length; i++) {
                 var removeditemlist = arr1.filter(item => !arr2.includes(item));
                 var randomIndex = Math.floor(Math.random() * removeditemlist.length);
                 var new_name = removeditemlist[randomIndex];
+
                 
-
-                    
-                // subinfo.name = StockList[i];
-
-                // var bounce = start_bounce*getProbability();
-                // subinfo.startprice += Math.round(bounce);
-                // subinfo.price = subinfo.startprice;
-
-                // subinfo.chart_array = new Array(chart_value_count).fill(subinfo.startprice);
-                
-                // Info.push(Object.assign({}, subinfo));
 
 
                 StockList[i] = new_name;
+
+                
+                var bounce = start_bounce*getProbability();
+                subinfo.startprice += Math.round(bounce);
+                subinfo.price = subinfo.startprice;
+
+                subinfo.chart_array = new Array(chart_value_count).fill(subinfo.startprice);
+                
+
                 
                 subinfo.name = new_name;
-                subinfo.chart_array = startchartarray.slice();
                 
                 Info[i] = subinfo;
+                // iteminfo = Info[i];
 
                 iteminfo.startprice = iteminfo.price;
                 iteminfo.now_time = 0;
                 iteminfo.time = getTime();
                 iteminfo.future = Math.round(getProbability()*big_bounce);
+                
             }
 
         }
