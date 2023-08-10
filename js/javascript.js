@@ -286,15 +286,17 @@ var subinfo = {
 
 var Info = []
 for(var i = 0; i<number_of_item; i++) {
-    subinfo.name = StockList[i];
+
+    var pushinfo = Object.assign({}, subinfo);
+    pushinfo.name = StockList[i];
 
     var bounce = start_bounce*getProbability();
-    subinfo.startprice += Math.round(bounce);
-    subinfo.price = subinfo.startprice;
+    pushinfo.startprice += Math.round(bounce);
+    pushinfo.price = pushinfo.startprice;
 
-    subinfo.chart_array = new Array(chart_value_count).fill(subinfo.startprice);
+    pushinfo.chart_array = new Array(chart_value_count).fill(pushinfo.startprice);
     
-    Info.push(Object.assign({}, subinfo));
+    Info.push(pushinfo);
 }
 
 //종목 div 배열 만들기
@@ -397,6 +399,7 @@ for(var i = 0; i < itemList.length; i++) {
             if(iteminfo.price <=0 ){
                 iteminfo.time = -1;
                 iteminfo.price = 0;
+                console.log(iteminfo.name+" 상장폐지");
             }
             iteminfo.now_time++;
             AddChartValue(iteminfo.chart_array, iteminfo.price);
@@ -421,23 +424,24 @@ for(var i = 0; i < itemList.length; i++) {
                 var randomIndex = Math.floor(Math.random() * removeditemlist.length);
                 var new_name = removeditemlist[randomIndex];
 
-                
-
-
                 StockList[i] = new_name;
 
+                var deinfo =  Object.assign({}, subinfo);
+
                 
+                
+
                 var bounce = start_bounce*getProbability();
-                subinfo.startprice += Math.round(bounce);
-                subinfo.price = subinfo.startprice;
+                deinfo.startprice += Math.round(bounce);
+                deinfo.price = deinfo.startprice;
 
-                subinfo.chart_array = new Array(chart_value_count).fill(subinfo.startprice);
+                deinfo.chart_array = new Array(chart_value_count).fill(deinfo.startprice);
                 
 
                 
-                subinfo.name = new_name;
+                deinfo.name = new_name;
                 
-                Info[i] = subinfo;
+                Info[i] = deinfo;
                 // iteminfo = Info[i];
 
                 iteminfo.startprice = iteminfo.price;
