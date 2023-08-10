@@ -6,10 +6,10 @@ var number_of_item = 5; //19이하로 설정 because 색상이 19개밖에 없�
 var big_bounce = 250000;
 var small_bounce = 10000;
 var max_time = 10;
-var start_price = 1000000;
-var start_bounce = 100000;
+var start_price = 500000;
+var start_bounce = 200000;
 var chart_value_count = 20;
-var start_property = 5000000;
+var start_property = 10000000;
 var delisting_delay = 10; //s
 var repeating_time = 1; //s
 var defaultColors = [
@@ -271,7 +271,7 @@ var startchartarray = new Array(chart_value_count).fill(start_price);
 var subinfo = {
     name : '',
     startprice : start_price,
-    price : start_price,
+    price : 0,
     future : 0,
     time : 0,
     now_time : 0,
@@ -288,6 +288,11 @@ var subinfo = {
 var Info = []
 for(var i = 0; i<number_of_item; i++) {
     subinfo.name = StockList[i];
+
+    var bounce = start_bounce*getProbability();
+    subinfo.startprice += bounce;
+    subinfo.price = subinfo.startprice;
+
     subinfo.chart_array = startchartarray.slice();
     Info.push(Object.assign({}, subinfo));
 }
