@@ -338,12 +338,12 @@ for(var i = 0; i < itemList.length; i++) {
     var select = document.createElement("select");
     var option = document.createElement("option");
     var option2 = document.createElement("option");
-    option.setAttribute("value", "money");
-    option.innerHTML = "금액";
-    select.appendChild(option);
     option2.setAttribute("value", "count");
     option2.innerHTML = "주";
+    option.setAttribute("value", "money");
+    option.innerHTML = "금액";
     select.appendChild(option2);
+    select.appendChild(option);
     select.setAttribute("id","select"+(i+1));
     item.appendChild(select);
 
@@ -352,6 +352,7 @@ for(var i = 0; i < itemList.length; i++) {
     number.setAttribute("min","0");
     number.setAttribute("step","1");
     number.setAttribute("id","number"+(i+1));
+    number.setAttribute("value","1");
     item.appendChild(number);
 
     var noti = document.createElement("label");
